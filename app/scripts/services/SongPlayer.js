@@ -5,17 +5,18 @@
     var currentAlbum = Fixtures.getAlbum();
 
     var currentBuzzObject = null;
-    
+
     /**
     * @function setSong
     * @desc Stops currently playing song and loads new audio file as currentBuzzObject
     * @param {Object} song
     */
 
-    var setSong = function(song) {
+
+    var setSong = function (song) {
       if (currentBuzzObject) {
         currentBuzzObject.stop();
-        songPlayer.currentSong.playing = null;
+        SongPlayer.currentSong.playing = null;
       }
 
       currentBuzzObject = new buzz.sound(song.audioUrl, {
@@ -31,8 +32,14 @@
       song.playing = true;
     }
 
-    var getSongIndex = function(song) {
-      return currentAlbum.songs.indexof(song);
+    var stopSong = function(song) {
+      currentBuzzObject.stop();
+      song.playing = null;
+    }
+
+
+    var getSongIndex = function (song) {
+      return currentAlbum.songs.indexOf(song);
     };
 
     SongPlayer.currentSong = null;
@@ -42,7 +49,7 @@
     * @type {Object}
     */
 
-    // @function play
+    // @function SongPlayer.play
     // @desc Play current or new song
     // @param {Object} song
 
@@ -74,15 +81,30 @@
       currentSongIndex--;
 
       if (currentSongIndex < 0) {
-        currentBuzzObject.stop();
-        SongPlayer.currentSong.playing = null;
+        stopSong(SongPlayer.currentSong);
+
       } else {
         var song = currentAlbum.songs[currentSongIndex];
         setSong(song);
         playSong(song);
       }
     };
-    // get the index of the currently playing song and then decrease
+
+    SongPlayer.next = function() {
+      var currentSongIndex = getSongIndex(SongPlayer.currentSong);
+      currentSongIndex++;
+
+      if (currentSongIndex === currentAlbum.songs.duration) {
+        stopSong(SongPlayer.currentSong);
+
+      } else {
+        var song = currentAlbum.songs[currentSongIndex];
+        setSong(song);
+        playSong(song);
+      }
+    };
+
+    // get the index of the currently playing song and then decrease/increase
     // that index by one.
 
     return SongPlayer;
