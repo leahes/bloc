@@ -1,5 +1,5 @@
 (function() {
-  function SongPlayer(Fixtures) {
+  function SongPlayer($rootScope, Fixtures) {
     var SongPlayer = {};
 
     var currentAlbum = Fixtures.getAlbum();
@@ -24,6 +24,12 @@
         preload: true
       });
 
+      currentBuzzObject.bind('timeupdate', function() {
+        $rootScope.$apply(function() {
+          SongPlayer.currentTime = currentBuzzObject.getTime();
+        });
+      });
+
       SongPlayer.currentSong = song;
     };
 
@@ -43,6 +49,7 @@
     };
 
     SongPlayer.currentSong = null;
+    SongPlayer.currentTime = null;
 
      /**
      * @desc Current playback time (in seconds) of currently playing song
@@ -71,10 +78,12 @@
       }
     };
 
-    // @function pause
-    // @desc Pause current song
-    // @param {Object} song
-
+    /**
+    * @function SongPlayer.pause
+    * @desc Public method. Takes a song object parameter. Pauses the currently playing Buzz Object
+    * and sets the song's 'playing' attribute to false.
+    * @param {Object} song
+    */
 
     SongPlayer.pause = function(song) {
       song = song || SongPlayer.currentSong;
@@ -110,6 +119,17 @@
       }
     };
 
+    /**
+    * @function setCurrentTime
+    * @desc Set current time (in seconds) of currently playing song
+    * @param {Number} time
+    */
+    SongPlayer.setCurrentTime = function(time) {
+      if (currentBuzzObject) {
+        currentBuzzObject.setTime(time);
+      }
+    };
+
     // get the index of the currently playing song and then decrease/increase
     // that index by one.
 
@@ -118,7 +138,7 @@
 
   angular
   .module('blocJams')
-  .factory('SongPlayer',['Fixtures', SongPlayer]);
+  .factory('SongPlayer',['$rootScope','Fixtures', SongPlayer]);
 })();
 
 //ALEX? [Violation] Added non-passive event listener to a scroll-blocking 'mousewheel' event. Consider marking event handler as
