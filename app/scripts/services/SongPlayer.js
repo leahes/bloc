@@ -50,13 +50,14 @@
 
     SongPlayer.currentSong = null;
     SongPlayer.currentTime = null;
+    SongPlayer.volume = 100;
 
      /**
      * @desc Current playback time (in seconds) of currently playing song
      * @type {Number}
      */
      SongPlayer.currentTime = null;
-     
+
     /**
     * @desc Buzz object audio file
     * @type {Object}
@@ -128,6 +129,13 @@
       if (currentBuzzObject) {
         currentBuzzObject.setTime(time);
       }
+    };
+
+    SongPlayer.setVolume = function(volume) {
+      if (currentBuzzObject) {
+        currentBuzzObject.setVolume(volume);
+      }
+      SongPlayer.volume = volume;
     };
 
     // get the index of the currently playing song and then decrease/increase
